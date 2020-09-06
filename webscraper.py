@@ -148,12 +148,22 @@ def UBS():
     html = requests.get(url)
     output = BeautifulSoup(html.text, 'html.parser')
 
-    output = json.loads(output.find('input', {'id': 'preLoadJSON'})['value'])
-
-
-
-
-
-
-if __name__ == '__main__':
-    BailleGillford()
+    for i in output['searchResultsResponse']['Jobs']['Job']:
+        for j in i['Questions']:
+            if j['QuestionName'] == 'jobtitle':
+                print(j['Value'])
+            elif j['QuestionName'] == 'formtext23':
+                print(j['Value'])
+            elif j['QuestionName'] == 'formtext21':
+                print(j['Value'])
+            elif j['QuestionName'] == 'lastupdated':
+                print(j['Value'])
+            elif j['QuestionName'] == 'reqid':
+                reqid = j['Value']
+            elif j['QuestionName'] == 'clientid':
+                clientid = j['Value']
+            elif j['QuestionName'] == 'siteid':
+                siteid = j['Value']
+        print('https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=' + str(clientid) + '&siteid=' + str(
+            siteid) + '&PageType=JobDetails&jobid=' + str(reqid))
+        print(' ')
