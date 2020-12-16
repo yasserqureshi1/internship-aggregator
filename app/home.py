@@ -9,3 +9,7 @@ home = Blueprint("home", __name__)
 def base_page():
     return render_template('home.html')
 
+
+@home.route('/<random>')
+def error_page(random):
+    return render_template('not_found.html')
