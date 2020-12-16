@@ -22,6 +22,7 @@ def create_db():
 # Create Companies TABLE with the following columns:
 #       - Company name
 #       - Company description
+#       - Company
 
 # Create Position Table with following columns
 #       - Position
@@ -30,4 +31,5 @@ def create_db():
 #       - Timescale
 #       - Date posted
 #       - Company
+#       - Location
 
