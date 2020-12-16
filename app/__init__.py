@@ -1,5 +1,5 @@
 from flask import Flask
-from . import home, companies
+from . import home, companies, company_page
 
 
 def create_app():
@@ -7,4 +7,5 @@ def create_app():
 
     app.register_blueprint(home.home)
     app.register_blueprint(companies.companies)
+    app.register_blueprint(company_page.company_page)
     return app
