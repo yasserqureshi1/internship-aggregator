@@ -22,6 +22,7 @@ def BailleGillford():
         print(i['title']['instances'][0]['text'])
         print(i['subtitles'][1]['instances'][0]['text'])
         print('https://bailliegifford.wd3.myworkdayjobs.com' + i['title']['commandLink'])
+        print(i)
         print(' ')
 
 
@@ -46,7 +47,7 @@ def Citi():
     html = requests.get(url=url, headers=headers)
     output = json.loads(html.text)
 
-    soup = BeautifulSoup(output['results'])
+    soup = BeautifulSoup(output['results'], 'html.parser')
     job_list = soup.select('a[data-job-id*=""]')
     for i in job_list:
         print(i.text)
