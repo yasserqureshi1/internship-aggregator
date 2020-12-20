@@ -1,14 +1,15 @@
-from flask import Blueprint, request, redirect, url_for
+from flask import Blueprint, abort
 from flask import render_template
-
+from app.models import Companies, Positions
 
 company_page = Blueprint("company_page", __name__)
 
 
 @company_page.route('/companies/<company>')
 def individual_company_page(company):
-    l = ['citi', 'morganstanley']
-    if company in l:
-        return render_template('company_page.html', data=company)
+    comp = Companies.query.filter_by(url=company).first()
+    if comp is not None:
+        pos = Positions.query.filter_by(company_id=comp.id)
+        return render_template('company_page.html', company=comp, positions=pos)
     else:
-        return render_template('not_found.html')
+        abort(404)
