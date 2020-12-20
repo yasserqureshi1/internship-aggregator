@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>The Internship Aggregator</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="header">
         {% include "banner.html" %}
     </div>
-
+    <br>
     <div class="middle" >
         {% block content %}
         {% endblock %}
