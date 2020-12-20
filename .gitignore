@@ -1,2 +1,4 @@
 # Project exclude paths
 /venv/
+NOTES.txt
+app/database/app.db
