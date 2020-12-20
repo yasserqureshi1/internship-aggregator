@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="">
-    <h1 class="header">Companies is working</h1>
-
+<div class="company">
+    <h1 class="company-title">List of Companies</h1>
+    {% for company in list_of_companies %}
+    <a href="/companies/{{company.url}}" >
+        <p>{{company.name}}</p>
+    </a>
+    {% endfor %}
 </div>
 {% endblock %}
