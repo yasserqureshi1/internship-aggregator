@@ -27,6 +27,7 @@ def create_app():
         db.create_all()
     app.app_context().push()
 
+    #scrape_company_sites()
     sched = BackgroundScheduler(daemon=True)
     sched.add_job(scrape_company_sites, 'interval', hours=6)
     sched.start()

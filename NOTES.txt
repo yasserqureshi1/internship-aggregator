@@ -35,4 +35,4 @@ company_page.html
     - Filters/sorting (left of screen)
         - Sort alphabetically (A-Z)
         - Sort alphabetically (Z-A)
-        { - industry}
+        { - industry}c

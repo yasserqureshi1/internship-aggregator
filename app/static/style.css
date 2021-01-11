@@ -5,9 +5,49 @@
 
 .homepage .home-title {
     margin-left: 10px;
-
 }
 
-.company .company-title {
+.company-page .company-page-title {
+    font-size: 27px;
     margin-left: 10px;
+}
+
+.company-page .company-page-description{
+    margin-left: 10px;
+}
+
+.company-page .company-page-tile-text {
+    margin-left: 15px;
+}
+
+.company-page .company-page-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.company-page .company-page-tile {
+    border-radius: 25px;
+    background: #b1bcce;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    margin: 15px;
+    padding: 20px;
+    width: 200px;
+    height: 150px;
+}
+
+.company-header .company-title {
+    font-size: 27px;
+    margin-left: 10px;
+}
+
+.company-header .company-description {
+    font-size: 20px;
+    margin-left: 15px;
+}
+
+.company-tiled-position {
+    margin-left: 15px;
 }

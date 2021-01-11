@@ -4,18 +4,66 @@ import json
 from app.models import Companies, Positions, db
 
 
+def company_checker(name, description, url):
+    """
+    This checks whether the company profile is in the db (creates it if not) and deletes all position entries in that company.
+    """
+    exists = Companies.query.filter_by(name=name).first()  # Checks if company exists in db
+    if not exists:  # Adds to db
+        comp = Companies(name=name, description=description, url=url)
+        db.session.add(comp)
+        db.session.commit()
+    comp = Companies.query.filter_by(name=name).first()
+
+    pos = Positions.query.filter_by(
+        company_id=comp.id).all()  # Deletes all entries for particular company (Prepping for new entries)
+    for i in pos:
+        db.session.delete(i)
+        db.session.commit()
+    return comp
+
+
+def insert_new_positions(name, division, role, location, timescale, company_id, url):
+    """
+    Inserts new company positions into db
+    """
+    pos = Positions.query.filter_by(name=name, company_id=company_id).first()
+    if not pos:
+        new_pos = Positions(name=name,
+                            division=division,
+                            role=role,
+                            location=location,
+                            timescale=timescale,
+                            company_id=company_id,
+                            url=url)
+        db.session.add(new_pos)
+        db.session.commit()
+
+
+def check_role(text):
+    text = text.lower()
+    if 'summer' in text:
+        return 'Summer Internship'
+    elif '12' or 'placement' or 'year' in text:
+        return 'Placement'
+    elif 'graduate' or 'full time' in text:
+        return 'Graduate'
+
+
 class Scraper:
     def __init__(self):
-        self.BailleGifford()
+        #self.BailleGifford()
+        self.Citi()
+        #self.MorganStanley()
+        #self.JPMorgan()
+        #self.GoldmanSachs()
+        #self.Nomura()
+        #self.Royal_Bank_of_Canada()
+        #self.UBS()
 
     def BailleGifford(self):
         print('Getting new listings from Baille Gifford...')
-        exists = Companies.query.filter_by(name='Baille Gifford').first()
-        if not exists:
-            comp = Companies(name='Baille Gifford', description='Another company', url='baille-gifford')
-            db.session.add(comp)
-            db.session.commit()
-        comp = Companies.query.filter_by(name='Baille Gifford').first()
+        comp = company_checker(name='Baille Gifford', description='Another company', url='baille-gifford')
 
         headers = {
             'User-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, '
@@ -30,29 +78,29 @@ class Scraper:
 
         html = requests.get(url=url, headers=headers)
         output = json.loads(html.text)
-
-        pos = Positions.query.filter_by(company_id=comp.id).all()
-        for i in pos:
-            db.session.delete(i)
-            db.session.commit()
-        for i in output['body']['children'][0]['children'][0]['listItems']:
-            pos = Positions.query.filter_by(name=i['title']['instances'][0]['text'], company_id=comp.id).first()
-            if not pos:
-                new_pos = Positions(name=i['title']['instances'][0]['text'],
-                                division='NA',
-                                role='NA',
-                                location=i['subtitles'][1]['instances'][0]['text'],
-                                timescale='NA',
-                                company_id=comp.id,
-                                url='NA')
-                db.session.add(new_pos)
-                db.session.commit()
-
-
+        try:
+            for i in output['body']['children'][0]['children'][0]['listItems']:
+                insert_new_positions(name=i['title']['instances'][0]['text'],
+                                     division='NA',
+                                     role='NA',
+                                     location=i['subtitles'][1]['instances'][0]['text'],
+                                     timescale='NA',
+                                     company_id=comp.id,
+                                     url='NA')
+        except:
+            insert_new_positions(name='No Roles Found',
+                                 division='',
+                                 role='',
+                                 location='',
+                                 timescale='',
+                                 company_id=comp.id,
+                                 url='')
         print('Baille Gifford Complete')
 
-
     def Citi(self):
+        print('Getting new listings from Citi Bank...')
+        #comp = company_checker(name='Citi', description='Another company', url='citi')
+
         headers = {'Host': 'jobs.citi.com',
                    'Referer': 'https://jobs.citi.com/search-jobs',
                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, '
@@ -61,7 +109,7 @@ class Scraper:
 
         data = {'ActiveFacetID': 'Recent+Graduates'}
 
-        url = 'https://jobs.citi.com/search-jobs/results?ActiveFacetID=Recent+Graduates&CurrentPage=1&RecordsPerPage=18' \
+        url = 'https://jobs.citi.com/search-jobs/results?ActiveFacetID=Recent+Graduates&CurrentPage=1&RecordsPerPage=50' \
               '&Distance=50&RadiusUnitType=0&Keywords=&Location=&ShowRadius=False&CustomFacetName=&FacetTerm=&FacetType=0' \
               '&FacetFilters%5B0%5D.ID=2635167&FacetFilters%5B0%5D.FacetType=2&FacetFilters%5B0%5D.Count=18&FacetFilters' \
               '%5B0%5D.Display=United+Kingdom&FacetFilters%5B0%5D.IsApplied=true&FacetFilters%5B0%5D.FieldName' \
@@ -76,25 +124,43 @@ class Scraper:
         soup = BeautifulSoup(output['results'], 'html.parser')
         job_list = soup.select('a[data-job-id*=""]')
         for i in job_list:
-            print(i.text)
+            split = [j for j in i.text.split('\n') if j != '']
+            title = split[0]
+            location = split[1]
+            #print('gi:', i.text.split('\n'))
             print('https://jobs.citi.com' + i['href'])
             print(' ')
-
+            #insert_new_positions(name=i.text,
+            #                     division='NA',
+            #                     role='NA',
+            #                     location=i['subtitles'][1]['instances'][0]['text'],
+            #                     timescale='NA',
+            #                     company_id=comp.id,
+            #                     url='NA')
 
     def GoldmanSachs(self):
+        print('Getting new listings from Goldman Sachs...')
+        comp = company_checker(name='Goldman Sachs', description='Description to be filled', url='goldman-sachs')
+
         url = 'https://www.goldmansachs.com/careers/students/programs/programs-list.json'
 
         html = requests.get(url)
         output = json.loads(html.text)
 
         for i in output['programs']:
-            print(i['title'])
-            print(i['region']['name'])
-            print('https://www.goldmansachs.com' + i['url'])
-            print(' ')
-
+            insert_new_positions(name=i['title'],
+                                 division='NA',
+                                 role='NA',
+                                 location=i['region']['name'],
+                                 timescale='NA',
+                                 company_id=comp.id,
+                                 url=f'https://www.goldmansachs.com{i["url"]}')
+        print('Goldman Sachs Complete')
 
     def JPMorgan(self):
+        print('Getting new listings from JP Morgan...')
+        comp = company_checker(name='J.P. Morgan', description='Description to be filled', url='jp-morgan')
+
         url = 'https://careers.jpmorgan.com/services/json/careers/gate/programs.json'
 
         html = requests.get(url)
@@ -102,14 +168,19 @@ class Scraper:
 
         for i in output:
             for j in output[i]:
-                print(j['name'])
-                print(j['country'])
-                print(j['application_url'])
-                print(j['end_date'])
-                print(' ')
-
+                insert_new_positions(name=j['title'],
+                                     division='NA',
+                                     role=j['level'],
+                                     location=j['region'],
+                                     timescale='NA',
+                                     company_id=comp.id,
+                                     url=j['application_url'])
+            print('JP Morgan Complete')
 
     def MorganStanley(self):
+        print('Getting new listings from Morgan Stanley...')
+        comp = company_checker(name='Morgan Stanley', description='Description to be filled', url='morgan-stanley')
+
         url = 'https://morganstanley.tal.net/vx/lang-en-GB/mobile-0/brand-2/xf-3786f0ce9359/candidate/jobboard/vacancy/1' \
               '/adv/?f_Item_Opportunity_13857_lk=765&f_Item_Opportunity_17058_lk=133794&ftq= '
 
@@ -118,12 +189,19 @@ class Scraper:
 
         job_list = output.select('tr[class*="search_res details_row"]')
         for i in job_list:
-            print(i['data-title'])
-            print(i.find('a', {'class': 'subject'})['href'])
-            print(' ')
-
+            insert_new_positions(name=i['data-title'],
+                                 division='NA',
+                                 role='NA',
+                                 location='NA',
+                                 timescale='NA',
+                                 company_id=comp.id,
+                                 url=i.find('a', {'class': 'subject'})['href'])
+        print('Morgan Stanley Complete')
 
     def Nomura(self):
+        print('Getting new listings from Nomura...')
+        comp = company_checker(name='Nomura', description='Description to be filled', url='nomura')
+
         url = 'https://nomuracampus.tal.net/vx/lang-en-GB/mobile-0/appcentre-ext/brand-4/xf-5b60ed84bdc9/candidate' \
               '/jobboard/vacancy/1/adv/?f_Item_Opportunity_84825_lk=765&ftq='
 
@@ -132,12 +210,20 @@ class Scraper:
 
         job_list = output.select('tr[class*="search_res details_row"]')
         for i in job_list:
-            print(i['data-title'])
-            print(i.find('a', {'class': 'subject'})['href'])
-            print(' ')
+            insert_new_positions(name=i['data-title'],
+                                 division='NA',
+                                 role='NA',
+                                 location='NA',
+                                 timescale='NA',
+                                 company_id=comp.id,
+                                 url=i.find('a', {'class': 'subject'})['href'])
+        print('Nomura Complete')
 
+    def Royal_Bank_of_Canada(self):
+        print('Getting new listings from Royal Bank of Canada...')
+        comp = company_checker(name='Royal Bank of Canada', description='Description to be filled',
+                               url='royal-bank-of-canada')
 
-    def RBC(self):
         url = 'https://rbccmgraduates.gtisolutions.co.uk/Search/CandidateVacancies?facet=on&facet.field=%7B!ex' \
               '%3Dfacetstring_VacancyDetail_Role_Text%7Dfacetstring_VacancyDetail_Role_Text&facet.field=%7B!ex' \
               '%3Dfacetstring_VacancyDetail_Programme_Text%7Dfacetstring_VacancyDetail_Programme_Text&facet.field=%7B!ex' \
@@ -162,13 +248,19 @@ class Scraper:
         output = json.loads(html.text)
 
         for i in output['response']['docs']:
-            print(i['title'])
-            print('https://rbccmgraduates.gtisolutions.co.uk/' + i['dynamicstring_ShortName'] + '/' + str(
-                i['dbid']) + '/viewdetails')
-            print(' ')
-
+            insert_new_positions(name=i['title'],
+                                 division='NA',
+                                 role='NA',
+                                 location='NA',
+                                 timescale='NA',
+                                 company_id=comp.id,
+                                 url=f'https://rbccmgraduates.gtisolutions.co.uk/{i["dynamicstring_ShortName"]}/{i["dbid"]}/viewdetails')
+        print('Royal Bank of Canada Complete')
 
     def UBS(self):
+        print('Getting new listings from UBS...')
+        comp = company_checker(name='UBS', description='Description to be filled', url='ubs')
+
         url = 'https://jobs.ubs.com/TGnewUI/Search/Home/HomeWithPreLoad?partnerid=25008&siteid=5131&PageType' \
               '=searchResults&SearchType=linkquery&LinkID=3858#keyWordSearch=&locationSearch= '
 
@@ -191,9 +283,19 @@ class Scraper:
                     clientid = j['Value']
                 elif j['QuestionName'] == 'siteid':
                     siteid = j['Value']
-            print('https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=' + str(clientid) + '&siteid=' + str(
+            print('https://jobs.ubs.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=' + str(
+                clientid) + '&siteid=' + str(
                 siteid) + '&PageType=JobDetails&jobid=' + str(reqid))
             print(' ')
+
+            insert_new_positions(name=i['data-title'],
+                                 division='NA',
+                                 role='NA',
+                                 location='NA',
+                                 timescale='NA',
+                                 company_id=comp.id,
+                                 url=i.find('a', {'class': 'subject'})['href'])
+        print('Nomura Complete')
 
 
 Scraper()

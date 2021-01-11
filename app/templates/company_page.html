@@ -1,18 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="header-company">
-    <h4 class="company-title">{{company.name}}</h4>
-    <h6 class="company-description">{{company.description}}</h6>
+<div class="company-header">
+    <h2 class="company-title">{{company.name}}</h2>
+    <h5 class="company-description">{{company.description}}</h5>
 </div>
-
-<div class="tiled-position-company">
+<br>
+<div class="company-tiled-position">
     {% for position in positions %}
     <div>
         <a href="{{position.url}}">
             <p>{{position.name}}</p>
         </a>
-
     </div>
     {% endfor %}
 </div>

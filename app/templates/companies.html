@@ -1,12 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="company">
-    <h1 class="company-title">List of Companies</h1>
-    {% for company in list_of_companies %}
-    <a href="/companies/{{company.url}}" >
-        <p>{{company.name}}</p>
-    </a>
-    {% endfor %}
+<div class="company-page">
+    <h2 class="company-page-title">List of Companies</h2>
+    <p class="company-page-description">
+        Here you will find a list of all the companies that we have found student roles for by scraping the web.
+    </p>
+
+    <div class="company-page-container">
+        {% for company in list_of_companies %}
+            <a href="/companies/{{company.url}}" >
+                <div class="company-page-tile">
+                    <p class="company-page-tile-text" >{{company.name}}</p>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
 </div>
 {% endblock %}
+
