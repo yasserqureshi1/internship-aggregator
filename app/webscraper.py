@@ -296,6 +296,7 @@ class Scraper:
                                  company_id=comp.id,
                                  url=i.find('a', {'class': 'subject'})['href'])
         print('Nomura Complete')
+    
 
 
 Scraper()
