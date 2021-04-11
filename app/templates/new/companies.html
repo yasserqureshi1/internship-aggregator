@@ -1,0 +1,70 @@
+{% extends "new/banner.html" %}
+{% block content %}
+
+<!-- Title and search -->
+<div class="container text-center w-25 p-3">
+    <div class="row">
+        <h1>List of Companies</h1>
+    </div>
+    <div class="row-cols-auto">
+        <form>
+            <input type="text" name="search" placeholder="Search">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<!-- Main Body-->
+<div class="container">
+    <!-- Pagination -->
+    <div class="row">
+        <nav aria-label="navigation">
+            <form method="POST">
+                <ul class="pagination">
+                    <li class="page-item"><button class="page-link" value='A' name='alpha' type="submit">A</button></li>
+                    <li class="page-item"><button class="page-link" value='B' name='alpha' type="submit">B</button></li>
+                    <li class="page-item"><button class="page-link" value='C' name='alpha' type="submit">C</button></li>
+                    <li class="page-item"><button class="page-link" value='D' name='alpha' type="submit">D</button></li>
+                    <li class="page-item"><button class="page-link" value='E' name='alpha' type="submit">E</button></li>
+                    <li class="page-item"><button class="page-link" value='F' name='alpha' type="submit">F</button></li>
+                    <li class="page-item"><button class="page-link" value='G' name='alpha' type="submit">G</button></li>
+                    <li class="page-item"><button class="page-link" value='H' name='alpha' type="submit">H</button></li>
+                    <li class="page-item"><button class="page-link" value='I' name='alpha' type="submit">I</button></li>
+                    <li class="page-item"><button class="page-link" value='J' name='alpha' type="submit">J</button></li>
+                    <li class="page-item"><button class="page-link" value='K' name='alpha' type="submit">K</button></li>
+                    <li class="page-item"><button class="page-link" value='L' name='alpha' type="submit">L</button></li>
+                    <li class="page-item"><button class="page-link" value='M' name='alpha' type="submit">M</button></li>
+                    <li class="page-item"><button class="page-link" value='N' name='alpha' type="submit">N</button></li>
+                    <li class="page-item"><button class="page-link" value='O' name='alpha' type="submit">O</button></li>
+                    <li class="page-item"><button class="page-link" value='P' name='alpha' type="submit">P</button></li>
+                    <li class="page-item"><button class="page-link" value='Q' name='alpha' type="submit">Q</button></li>
+                    <li class="page-item"><button class="page-link" value='R' name='alpha' type="submit">R</button></li>
+                    <li class="page-item"><button class="page-link" value='S' name='alpha' type="submit">S</button></li>
+                    <li class="page-item"><button class="page-link" value='T' name='alpha' type="submit">T</button></li>
+                    <li class="page-item"><button class="page-link" value='U' name='alpha' type="submit">U</button></li>
+                    <li class="page-item"><button class="page-link" value='V' name='alpha' type="submit">V</button></li>
+                    <li class="page-item"><button class="page-link" value='W' name='alpha' type="submit">W</button></li>
+                    <li class="page-item"><button class="page-link" value='X' name='alpha' type="submit">X</button></li>
+                    <li class="page-item"><button class="page-link" value='Y' name='alpha' type="submit">Y</button></li>
+                    <li class="page-item"><button class="page-link" value='Z' name='alpha' type="submit">Z</button></li>
+                </ul>
+            </form>
+        </nav>
+    </div>
+
+    <!-- Search Results -->
+    <div>
+        <div>
+            <h3>Search Results</h3>
+        </div>
+        <div>
+            {% for item in search %}
+            <div>
+                <a href="{{item['link']}}"><p>{{ item['name'] }}</p></a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

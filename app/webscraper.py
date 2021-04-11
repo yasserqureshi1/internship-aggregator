@@ -52,13 +52,13 @@ def check_role(text):
 
 class Scraper:
     def __init__(self):
-        #self.BailleGifford()
+        self.BailleGifford()
         self.Citi()
-        #self.MorganStanley()
+        self.MorganStanley()
         #self.JPMorgan()
-        #self.GoldmanSachs()
-        #self.Nomura()
-        #self.Royal_Bank_of_Canada()
+        self.GoldmanSachs()
+        self.Nomura()
+        self.Royal_Bank_of_Canada()
         #self.UBS()
 
     def BailleGifford(self):

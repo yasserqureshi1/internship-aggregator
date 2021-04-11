@@ -21,4 +21,4 @@ def error_500(error):
 
 
 if __name__ == '__main__':
-    app.run(use_reloader=False)     # Change this
+    app.run(use_reloader=False, debug=True)     # Change this

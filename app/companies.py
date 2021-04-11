@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask import render_template
-from app.models import Companies
+from app.models import Companies, Positions
 
 
 companies = Blueprint("companies", __name__)

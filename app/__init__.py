@@ -19,18 +19,18 @@ def create_app():
     db.init_app(app)
 
     from . import index, companies
-    app.register_blueprint(index.home)
-    app.register_blueprint(companies.companies)
+    app.register_blueprint(index.index)
+    #app.register_blueprint(companies.companies)
 
     with app.app_context():
         db.create_all()
         db.session.commit()
     app.app_context().push()
 
-    scrape_company_sites()
-    sched = BackgroundScheduler(daemon=True)
-    sched.add_job(scrape_company_sites, 'interval', hours=6)
-    sched.start()
+    #scrape_company_sites()
+    #sched = BackgroundScheduler(daemon=True)
+    #sched.add_job(scrape_company_sites, 'interval', hours=6)
+    #sched.start()
 
     db.session.commit()
     
