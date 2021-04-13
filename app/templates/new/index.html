@@ -12,13 +12,13 @@
         <!-- Header -->
         <div class="row" style="margin-top:10px;margin-bottom:10px;">
             <div>
-                <h1 class="title has-text-centered" >The Internship Aggregator</h1>
-                <p class="subtitle has-text-centered">A daily updated list of Internships, Placements and Graduate Jobs</p>
+                <h1 class="title text-center" >The Internship Aggregator</h1>
+                <p class="subtitle text-center">A daily updated list of Internships, Placements and Graduate Jobs</p>
             </div>
-            <div class="navigation">
+            <div class="navigation text-center">
                 <a href="/">Home</a>
                 <a href="/about">About</a>
-                <a href="/companies">Companies</a>
+                <a href="/list-of-companies">Companies</a>
             </div>
         </div>
 
@@ -40,7 +40,7 @@
                 <!-- Newly added positions -->
                 <div class="row">
                     <div>
-                        <h2>Recently Added</h2>
+                        <h2 class="fs-3" style="padding-top: 5px; padding-bottom: 5px;">Recently Added</h2>
                     </div>
                     <div class="container-fluid">
                         <div class="d-flex flex-row flex-nowrap overflow-auto">
@@ -50,7 +50,7 @@
                                 <div class="card card-block">
                                     <div class="card-body">
                                         <a href="{{pos['url']}}" >
-                                            <h5 class="card-title">{{pos["company"]}}: {{pos["title"]}}</h5>
+                                            <h5 class="card-title "><b>{{pos["company"]}}</b>: {{pos["title"]}}</h5>
                                         </a>
                                         <h6 class="card-subtitle mb-2 text-muted">{{pos["location"]}}</h6>
                                         <p class="card-text">{{pos["description"]}}</p>
@@ -69,7 +69,7 @@
                 <!-- Closing soon positions -->
                 <div class="row">
                     <div>
-                        <h2>Closing Soon</h2>
+                        <h2 class="fs-3" style="padding-top: 5px; padding-bottom: 5px;">Closing Soon</h2>
                     </div>
                     <div class="container-fluid">
                         <div class="d-flex flex-row flex-nowrap overflow-auto">
@@ -79,7 +79,7 @@
                                 <div class="card card-block">
                                     <div class="card-body">
                                         <a href="{{pos['url']}}" >
-                                            <h5 class="card-title">{{pos["company"]}}: {{pos["title"]}}</h5>
+                                            <h5 class="card-title"><b>{{pos["company"]}}</b>: {{pos["title"]}}</h5>
                                         </a>
                                         <h6 class="card-subtitle mb-2 text-muted">{{pos["location"]}}</h6>
                                         <p class="card-text">{{pos["description"]}}</p>
@@ -98,7 +98,7 @@
                 <!-- Browse positions -->
                 <div class="row">
                     <div>
-                        <h2>Browse</h2>
+                        <h2 class="fs-3" style="padding-top: 5px; padding-bottom: 5px;">Browse</h2>
                     </div>
                     <div class="container-fluid">
                         <div class="d-flex flex-row flex-nowrap overflow-auto">
@@ -108,7 +108,7 @@
                                 <div class="card card-block">
                                     <div class="card-body">
                                         <a href="{{pos['url']}}" >
-                                            <h5 class="card-title">{{pos["company"]}}: {{pos["title"]}}</h5>
+                                            <h5 class="card-title"><b>{{pos["company"]}}</b>: {{pos["title"]}}</h5>
                                         </a>
                                         <h6 class="card-subtitle mb-2 text-muted">{{pos["location"]}}</h6>
                                         <p class="card-text">{{pos["description"]}}</p>
