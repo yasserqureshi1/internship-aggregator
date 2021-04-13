@@ -2,11 +2,11 @@
 {% block content %}
 
 <!-- Title and search -->
-<div class="container text-center w-25 p-3">
+<div class="container text-center p-3">
     <div class="row">
-        <h1>List of Companies</h1>
+        <h1 class='fs-1' style='padding-bottom: 10px;'>List of Companies</h1>
     </div>
-    <div class="row-cols-auto">
+    <div class="row">
         <form>
             <input type="text" name="search" placeholder="Search">
             <button type="submit">Search</button>
@@ -55,12 +55,18 @@
     <!-- Search Results -->
     <div>
         <div>
-            <h3>Search Results</h3>
+            <h3 class='fs-3' style='padding-bottom: 10px; padding-top: 10px;'>Search Results</h3>
         </div>
         <div>
             {% for item in search %}
-            <div>
-                <a href="{{item['link']}}"><p>{{ item['name'] }}</p></a>
+            <div style='padding-top:5px; padding-bottom:5px;'>
+                <div class='card'>
+                    <div class='card-body'>
+                        <a href="{{item['link']}}"><h5 class="card-title">{{ item['name'] }}</h5></a>
+                        <h6 class="card-subtitle mb-2 text-muted">Industry: {{ item['industry'] }} | Number of active positions: {{ item['no-open'] }}</h6>
+                        <p class="card-text">{{ item['description'] }}</p>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
