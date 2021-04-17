@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Title and search bar -->
+<div class="container text-center p-3">
+    <div class="row">
+        <h1 class='fs-1' style='padding-bottom: 10px;'>Search Results</h1>
+    </div>
+    <div class="row">
+        <form>
+            <input type="text" name="search" placeholder="Search">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<!-- Search Results -->
+<div>
+    <div>
+        {% for pos in browse %}
+        <div style="padding-top:10px; padding-bottom:10px;">
+            <div class="card card-block">
+                <div class="card-body">
+                    <a href="{{pos['url']}}" >
+                        <h5 class="card-title">{{pos["company"]}}: {{pos["name"]}}</h5>
+                    </a>
+                    <h6 class="card-subtitle mb-2 text-muted">{{pos["location"]}}</h6>
+                    <p class="card-text">{{pos["description"]}}</p>
+                    <p class="card-text"><small class="text-muted">{{pos["lastupdated"]}}</small></p>
+                </div>    
+                <div class="card-footer text-muted">
+                    <p class="mx-auto text-center">{{pos["job_type"]}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

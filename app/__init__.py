@@ -18,9 +18,8 @@ def create_app():
     app.config.from_object(Config)
     db.init_app(app)
 
-    from . import index, companies
-    app.register_blueprint(index.index)
-    #app.register_blueprint(companies.companies)
+    from . import views
+    app.register_blueprint(views.views)
 
     with app.app_context():
         db.create_all()

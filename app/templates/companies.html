@@ -1,22 +1,76 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="company-page">
-    <h2 class="company-page-title">List of Companies</h2>
-    <p class="company-page-description">
-        Here you will find a list of all the companies that we have found student roles for by scraping the web.
-    </p>
 
-    <div class="company-page-container">
-        {% for company in list_of_companies %}
-            <a href="/companies/{{company.url}}" >
-                <div class="company-page-tile">
-                    <p class="company-page-tile-text" >{{company.name}}</p>
-                </div>
-            </a>
-        {% endfor %}
+<!-- Title and search -->
+<div class="container text-center p-3">
+    <div class="row">
+        <h1 class='fs-1' style='padding-bottom: 10px;'>List of Companies</h1>
+    </div>
+    <div class="row">
+        <form>
+            <input type="text" name="search" placeholder="Search">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<!-- Main Body-->
+<div class="container">
+    <!-- Pagination -->
+    <div class="row">
+        <nav aria-label="navigation">
+            <form method="POST">
+                <ul class="pagination">
+                    <li class="page-item"><button class="page-link" value='A' name='alpha' type="submit">A</button></li>
+                    <li class="page-item"><button class="page-link" value='B' name='alpha' type="submit">B</button></li>
+                    <li class="page-item"><button class="page-link" value='C' name='alpha' type="submit">C</button></li>
+                    <li class="page-item"><button class="page-link" value='D' name='alpha' type="submit">D</button></li>
+                    <li class="page-item"><button class="page-link" value='E' name='alpha' type="submit">E</button></li>
+                    <li class="page-item"><button class="page-link" value='F' name='alpha' type="submit">F</button></li>
+                    <li class="page-item"><button class="page-link" value='G' name='alpha' type="submit">G</button></li>
+                    <li class="page-item"><button class="page-link" value='H' name='alpha' type="submit">H</button></li>
+                    <li class="page-item"><button class="page-link" value='I' name='alpha' type="submit">I</button></li>
+                    <li class="page-item"><button class="page-link" value='J' name='alpha' type="submit">J</button></li>
+                    <li class="page-item"><button class="page-link" value='K' name='alpha' type="submit">K</button></li>
+                    <li class="page-item"><button class="page-link" value='L' name='alpha' type="submit">L</button></li>
+                    <li class="page-item"><button class="page-link" value='M' name='alpha' type="submit">M</button></li>
+                    <li class="page-item"><button class="page-link" value='N' name='alpha' type="submit">N</button></li>
+                    <li class="page-item"><button class="page-link" value='O' name='alpha' type="submit">O</button></li>
+                    <li class="page-item"><button class="page-link" value='P' name='alpha' type="submit">P</button></li>
+                    <li class="page-item"><button class="page-link" value='Q' name='alpha' type="submit">Q</button></li>
+                    <li class="page-item"><button class="page-link" value='R' name='alpha' type="submit">R</button></li>
+                    <li class="page-item"><button class="page-link" value='S' name='alpha' type="submit">S</button></li>
+                    <li class="page-item"><button class="page-link" value='T' name='alpha' type="submit">T</button></li>
+                    <li class="page-item"><button class="page-link" value='U' name='alpha' type="submit">U</button></li>
+                    <li class="page-item"><button class="page-link" value='V' name='alpha' type="submit">V</button></li>
+                    <li class="page-item"><button class="page-link" value='W' name='alpha' type="submit">W</button></li>
+                    <li class="page-item"><button class="page-link" value='X' name='alpha' type="submit">X</button></li>
+                    <li class="page-item"><button class="page-link" value='Y' name='alpha' type="submit">Y</button></li>
+                    <li class="page-item"><button class="page-link" value='Z' name='alpha' type="submit">Z</button></li>
+                </ul>
+            </form>
+        </nav>
     </div>
 
+    <!-- Search Results -->
+    <div>
+        <div>
+            <h3 class='fs-3' style='padding-bottom: 10px; padding-top: 10px;'>Search Results</h3>
+        </div>
+        <div>
+            {% for item in search %}
+            <div style='padding-top:5px; padding-bottom:5px;'>
+                <div class='card'>
+                    <div class='card-body'>
+                        <a href="{{item['link']}}"><h5 class="card-title">{{ item['name'] }}</h5></a>
+                        <h6 class="card-subtitle mb-2 text-muted">Industry: {{ item['industry'] }} | Number of active positions: {{ item['no-open'] }}</h6>
+                        <p class="card-text">{{ item['description'] }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
-{% endblock %}
 
+{% endblock %}

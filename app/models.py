@@ -3,6 +3,7 @@ from datetime import datetime
 
 
 class Companies(db.Model):
+   __tablename__ = 'companies'
    id = db.Column(db.Integer, primary_key=True)
    name = db.Column(db.String(120), nullable=False, unique=True)
    industry = db.Column(db.String(80), nullable=False)
@@ -12,6 +13,7 @@ class Companies(db.Model):
 
 
 class Positions(db.Model):
+   __tablename__ = 'positions'
    id = db.Column(db.Integer, primary_key=True)
    name = db.Column(db.String(120), nullable=False)
    description = db.Column(db.String(1000), nullable=False)

@@ -1,16 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-from app.models import Companies, Positions, db
+#from app.models import Companies, Positions, db
 
 
-def company_checker(name, description, url):
+def company_checker(name, description, industry, url):
     """
     This checks whether the company profile is in the db (creates it if not) and deletes all position entries in that company.
     """
     exists = Companies.query.filter_by(name=name).first()  # Checks if company exists in db
     if not exists:  # Adds to db
-        comp = Companies(name=name, description=description, url=url)
+        comp = Companies(name=name, description=description, industry=industry, url=url)
         db.session.add(comp)
         db.session.commit()
     comp = Companies.query.filter_by(name=name).first()
@@ -23,17 +23,19 @@ def company_checker(name, description, url):
     return comp
 
 
-def insert_new_positions(name, division, role, location, timescale, company_id, url):
+def insert_new_positions(name, description, role, location, job_type, date_posted, date_closing, company_id, url):
     """
     Inserts new company positions into db
     """
     pos = Positions.query.filter_by(name=name, company_id=company_id).first()
     if not pos:
         new_pos = Positions(name=name,
-                            division=division,
+                            description=description,
                             role=role,
                             location=location,
-                            timescale=timescale,
+                            job_type=job_type,
+                            date_posted=date_posted,
+                            date_closing=date_closing,
                             company_id=company_id,
                             url=url)
         db.session.add(new_pos)
@@ -52,18 +54,18 @@ def check_role(text):
 
 class Scraper:
     def __init__(self):
-        self.BailleGifford()
-        self.Citi()
-        self.MorganStanley()
+        #self.BailleGifford()
+        #self.Citi()
+        #self.MorganStanley()
         #self.JPMorgan()
         self.GoldmanSachs()
-        self.Nomura()
-        self.Royal_Bank_of_Canada()
+        #self.Nomura()
+        #self.Royal_Bank_of_Canada()
         #self.UBS()
 
     def BailleGifford(self):
         print('Getting new listings from Baille Gifford...')
-        comp = company_checker(name='Baille Gifford', description='Another company', url='baille-gifford')
+        comp = company_checker(name='Baille Gifford', description='Another company', industry='', url='baille-gifford')
 
         headers = {
             'User-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, '
@@ -72,34 +74,30 @@ class Scraper:
             'Host': 'bailliegifford.wd3.myworkdayjobs.com',
             'Accept': 'application/json,application/xml',
             'workday-client-manifest-id': 'mvp',
-            'Referer': 'https://bailliegifford.wd3.myworkdayjobs.com/en-US/BaillieGiffordEarlyCareers'}
+            'Referer': 'https://bailliegifford.wd3.myworkdayjobs.com/BaillieGiffordEarlyCareers'}
 
-        url = "https://bailliegifford.wd3.myworkdayjobs.com/en-US/BaillieGiffordEarlyCareers"
+        url = "https://bailliegifford.wd3.myworkdayjobs.com/BaillieGiffordEarlyCareers"
 
         html = requests.get(url=url, headers=headers)
         output = json.loads(html.text)
         try:
             for i in output['body']['children'][0]['children'][0]['listItems']:
                 insert_new_positions(name=i['title']['instances'][0]['text'],
-                                     division='NA',
+                                     description='',
                                      role='NA',
                                      location=i['subtitles'][1]['instances'][0]['text'],
-                                     timescale='NA',
+                                     job_type='NA',
+                                    # date_posted='',
+                                     #date_closing='',
                                      company_id=comp.id,
                                      url='NA')
         except:
-            insert_new_positions(name='No Roles Found',
-                                 division='',
-                                 role='',
-                                 location='',
-                                 timescale='',
-                                 company_id=comp.id,
-                                 url='')
+            print('No Roles')
         print('Baille Gifford Complete')
 
     def Citi(self):
         print('Getting new listings from Citi Bank...')
-        #comp = company_checker(name='Citi', description='Another company', url='citi')
+        comp = company_checker(name='Citi', description='Another company', industry='', url='citi')
 
         headers = {'Host': 'jobs.citi.com',
                    'Referer': 'https://jobs.citi.com/search-jobs',
@@ -109,14 +107,7 @@ class Scraper:
 
         data = {'ActiveFacetID': 'Recent+Graduates'}
 
-        url = 'https://jobs.citi.com/search-jobs/results?ActiveFacetID=Recent+Graduates&CurrentPage=1&RecordsPerPage=50' \
-              '&Distance=50&RadiusUnitType=0&Keywords=&Location=&ShowRadius=False&CustomFacetName=&FacetTerm=&FacetType=0' \
-              '&FacetFilters%5B0%5D.ID=2635167&FacetFilters%5B0%5D.FacetType=2&FacetFilters%5B0%5D.Count=18&FacetFilters' \
-              '%5B0%5D.Display=United+Kingdom&FacetFilters%5B0%5D.IsApplied=true&FacetFilters%5B0%5D.FieldName' \
-              '=&FacetFilters%5B1%5D.ID=University+Programs&FacetFilters%5B1%5D.FacetType=5&FacetFilters%5B1%5D.Count=15' \
-              '&FacetFilters%5B1%5D.Display=University+Programs&FacetFilters%5B1%5D.IsApplied=true&FacetFilters%5B1%5D' \
-              '.FieldName=custom_fields.ELIGIBLE_CAMPUS&SearchResultsModuleName=Search+Results&SearchFiltersModuleName' \
-              '=Search+Filters&SortCriteria=0&SortDirection=0&SearchType=5&PostalCode=&fc=&fl=&fcf=&afc=&afl=&afcf= '
+        url = 'https://jobs.citi.com/search-jobs/results?ActiveFacetID=Recent+Graduates&CurrentPage=1&RecordsPerPage=500&Distance=50&RadiusUnitType=0&Keywords=&Location=&ShowRadius=False&IsPagination=False&CustomFacetName=&FacetTerm=&FacetType=0&FacetFilters%5B0%5D.ID=Recent+Graduates&FacetFilters%5B0%5D.FacetType=5&FacetFilters%5B0%5D.Count=205&FacetFilters%5B0%5D.Display=Recent+Graduates&FacetFilters%5B0%5D.IsApplied=true&FacetFilters%5B0%5D.FieldName=custom_fields.ECAMPUS&SearchResultsModuleName=Search+Results&SearchFiltersModuleName=Search+Filters&SortCriteria=0&SortDirection=0&SearchType=5&PostalCode=&fc=&fl=&fcf=&afc=&afl=&afcf='
 
         html = requests.get(url=url, headers=headers)
         output = json.loads(html.text)
@@ -127,20 +118,23 @@ class Scraper:
             split = [j for j in i.text.split('\n') if j != '']
             title = split[0]
             location = split[1]
-            #print('gi:', i.text.split('\n'))
-            print('https://jobs.citi.com' + i['href'])
-            print(' ')
-            #insert_new_positions(name=i.text,
-            #                     division='NA',
-            #                     role='NA',
-            #                     location=i['subtitles'][1]['instances'][0]['text'],
-            #                     timescale='NA',
-            #                     company_id=comp.id,
-            #                     url='NA')
+            if 'Summer' in title:
+                job_type = 'Internship'
+            else:
+                job_type = 'Graduate'
+            insert_new_positions(name=title,
+                                 description='NA',
+                                 role='NA',
+                                 location=location,
+                                 job_type=job_type,
+                                 date_posted=None,
+                                 date_closing=None,
+                                 company_id=comp.id,
+                                 url='https://jobs.citi.com' + i['href'])
 
     def GoldmanSachs(self):
         print('Getting new listings from Goldman Sachs...')
-        comp = company_checker(name='Goldman Sachs', description='Description to be filled', url='goldman-sachs')
+        #comp = company_checker(name='Goldman Sachs', description='Description to be filled', industry='', url='goldman-sachs')
 
         url = 'https://www.goldmansachs.com/careers/students/programs/programs-list.json'
 
@@ -149,17 +143,19 @@ class Scraper:
 
         for i in output['programs']:
             insert_new_positions(name=i['title'],
-                                 division='NA',
+                                 description=i['programTypeDescription'],
                                  role='NA',
                                  location=i['region']['name'],
-                                 timescale='NA',
+                                 job_type='NA',
+                                 date_posted=None,
+                                 date_closing=None,
                                  company_id=comp.id,
                                  url=f'https://www.goldmansachs.com{i["url"]}')
         print('Goldman Sachs Complete')
 
     def JPMorgan(self):
         print('Getting new listings from JP Morgan...')
-        comp = company_checker(name='J.P. Morgan', description='Description to be filled', url='jp-morgan')
+        comp = company_checker(name='J.P. Morgan', description='Description to be filled', industry='',url='jp-morgan')
 
         url = 'https://careers.jpmorgan.com/services/json/careers/gate/programs.json'
 
@@ -169,17 +165,19 @@ class Scraper:
         for i in output:
             for j in output[i]:
                 insert_new_positions(name=j['title'],
-                                     division='NA',
+                                     description='NA',
                                      role=j['level'],
                                      location=j['region'],
-                                     timescale='NA',
+                                     job_type='NA',
+                                     date_posted=None,
+                                     date_closing=None,
                                      company_id=comp.id,
                                      url=j['application_url'])
             print('JP Morgan Complete')
 
     def MorganStanley(self):
         print('Getting new listings from Morgan Stanley...')
-        comp = company_checker(name='Morgan Stanley', description='Description to be filled', url='morgan-stanley')
+        comp = company_checker(name='Morgan Stanley', description='Description to be filled', industry='', url='morgan-stanley')
 
         url = 'https://morganstanley.tal.net/vx/lang-en-GB/mobile-0/brand-2/xf-3786f0ce9359/candidate/jobboard/vacancy/1' \
               '/adv/?f_Item_Opportunity_13857_lk=765&f_Item_Opportunity_17058_lk=133794&ftq= '
@@ -190,17 +188,19 @@ class Scraper:
         job_list = output.select('tr[class*="search_res details_row"]')
         for i in job_list:
             insert_new_positions(name=i['data-title'],
-                                 division='NA',
+                                 description='NA',
                                  role='NA',
                                  location='NA',
-                                 timescale='NA',
+                                 job_type='NA',
+                                 date_posted=None,
+                                 date_closing=None,
                                  company_id=comp.id,
                                  url=i.find('a', {'class': 'subject'})['href'])
         print('Morgan Stanley Complete')
 
     def Nomura(self):
         print('Getting new listings from Nomura...')
-        comp = company_checker(name='Nomura', description='Description to be filled', url='nomura')
+        comp = company_checker(name='Nomura', description='Description to be filled', industry='', url='nomura')
 
         url = 'https://nomuracampus.tal.net/vx/lang-en-GB/mobile-0/appcentre-ext/brand-4/xf-5b60ed84bdc9/candidate' \
               '/jobboard/vacancy/1/adv/?f_Item_Opportunity_84825_lk=765&ftq='
@@ -211,17 +211,19 @@ class Scraper:
         job_list = output.select('tr[class*="search_res details_row"]')
         for i in job_list:
             insert_new_positions(name=i['data-title'],
-                                 division='NA',
+                                 description='NA',
                                  role='NA',
                                  location='NA',
-                                 timescale='NA',
+                                 job_type='NA',
+                                 date_posted=None,
+                                 date_closing=None,
                                  company_id=comp.id,
                                  url=i.find('a', {'class': 'subject'})['href'])
         print('Nomura Complete')
 
     def Royal_Bank_of_Canada(self):
         print('Getting new listings from Royal Bank of Canada...')
-        comp = company_checker(name='Royal Bank of Canada', description='Description to be filled',
+        comp = company_checker(name='Royal Bank of Canada', description='Description to be filled', industry='',
                                url='royal-bank-of-canada')
 
         url = 'https://rbccmgraduates.gtisolutions.co.uk/Search/CandidateVacancies?facet=on&facet.field=%7B!ex' \
@@ -249,17 +251,19 @@ class Scraper:
 
         for i in output['response']['docs']:
             insert_new_positions(name=i['title'],
-                                 division='NA',
+                                 description='',
                                  role='NA',
                                  location='NA',
-                                 timescale='NA',
+                                 job_type='NA',
+                                 date_posted=None,
+                                 date_closing=None,
                                  company_id=comp.id,
                                  url=f'https://rbccmgraduates.gtisolutions.co.uk/{i["dynamicstring_ShortName"]}/{i["dbid"]}/viewdetails')
         print('Royal Bank of Canada Complete')
 
     def UBS(self):
         print('Getting new listings from UBS...')
-        comp = company_checker(name='UBS', description='Description to be filled', url='ubs')
+        comp = company_checker(name='UBS', description='Description to be filled', industry='', url='ubs')
 
         url = 'https://jobs.ubs.com/TGnewUI/Search/Home/HomeWithPreLoad?partnerid=25008&siteid=5131&PageType' \
               '=searchResults&SearchType=linkquery&LinkID=3858#keyWordSearch=&locationSearch= '
@@ -289,14 +293,16 @@ class Scraper:
             print(' ')
 
             insert_new_positions(name=i['data-title'],
-                                 division='NA',
+                                 description='',
                                  role='NA',
                                  location='NA',
-                                 timescale='NA',
+                                 job_type='NA',
+                                 date_posted=None,
+                                 date_closing=None,
                                  company_id=comp.id,
                                  url=i.find('a', {'class': 'subject'})['href'])
         print('Nomura Complete')
     
 
 
-Scraper()
+Scraper().Citi()

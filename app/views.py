@@ -3,10 +3,10 @@ from flask import render_template, abort
 from app.models import Companies, Positions, db
 
 
-index = Blueprint("index", __name__)
+views = Blueprint("views", __name__)
 
 
-@index.route('/', methods=['GET', 'POST'])
+@views.route('/', methods=['GET', 'POST'])
 def base_page():
     # New Positions
     query = Positions.query.order_by(Positions.date_posted).limit(10).all()
@@ -31,15 +31,24 @@ def base_page():
         browse.append(
             {'company': Companies.query.filter_by(id=pos.company_id).first().name, 'title': pos.name, 'location':pos.location, 'description':pos.description, 'lastupdated': pos.date_posted, 'job_type':pos.job_type, 'url':pos.url},
         )
-    return render_template('new/index.html', new_pos=new_pos, close_pos=close_pos, browse=browse)
+    
 
+    return render_template('index.html', new_pos=new_pos, close_pos=close_pos, browse=browse)
 
-@index.route('/about', methods=['GET'])
+'''
+@views.route('/search', methods['GET', 'POST'])
+def search():
+    s = request.method['search']
+    query = Positions.query.filter(Positions.name.like('%' + s + '%'))
+    return render_template('search.html', )
+'''
+
+@views.route('/about', methods=['GET'])
 def about():
-    return render_template('new/about.html')
+    return render_template('about.html')
 
 
-@index.route('/list-of-companies', methods=['GET', 'POST'])
+@views.route('/list-of-companies', methods=['GET', 'POST'])
 def list_of_companies():
     if request.method == 'POST':
         if 'alpha' in request.form:
@@ -57,10 +66,10 @@ def list_of_companies():
         for q in query:
             open = Positions.query.filter_by(company_id=q.id).all().count()
             search.append({'name': q.name, 'industry': q.industry, 'no-open': open, 'description':q.description})
-    return render_template('new/companies.html', search=search)
+    return render_template('companies.html', search=search)
 
 
-@index.route('/companies/<company>', methods=['GET'])
+@views.route('/companies/<company>', methods=['GET'])
 def ind_company(company):
     query = Companies.query.filter_by(url=company).first()
     if query is None:
@@ -69,4 +78,5 @@ def ind_company(company):
         details = {'name': query.name, 'description': query.description}
         pos = Positions.query.filter_by(company_id=query.id).all()
 
-        return render_template('new/company.html', details=details, browse=pos)
+        return render_template('company.html', details=details, browse=pos)
+
