@@ -1,7 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-#from app.models import Companies, Positions, db
+from datetime import datetime
+from app.models import Companies, Positions, db
 
 
 def company_checker(name, description, industry, url):
@@ -42,7 +43,7 @@ def insert_new_positions(name, description, role, location, job_type, date_poste
         db.session.commit()
 
 
-def check_role(text):
+def check_job(text):
     text = text.lower()
     if 'summer' in text:
         return 'Summer Internship'
@@ -50,14 +51,15 @@ def check_role(text):
         return 'Placement'
     elif 'graduate' or 'full time' in text:
         return 'Graduate'
+    return 'NA'
 
 
 class Scraper:
     def __init__(self):
-        #self.BailleGifford()
-        #self.Citi()
-        #self.MorganStanley()
-        #self.JPMorgan()
+        #self.BailleGifford() Currently none open
+        self.Citi()
+        self.MorganStanley()
+        self.JPMorgan()
         self.GoldmanSachs()
         #self.Nomura()
         #self.Royal_Bank_of_Canada()
@@ -111,30 +113,27 @@ class Scraper:
 
         html = requests.get(url=url, headers=headers)
         output = json.loads(html.text)
-
         soup = BeautifulSoup(output['results'], 'html.parser')
+
         job_list = soup.select('a[data-job-id*=""]')
         for i in job_list:
             split = [j for j in i.text.split('\n') if j != '']
             title = split[0]
             location = split[1]
-            if 'Summer' in title:
-                job_type = 'Internship'
-            else:
-                job_type = 'Graduate'
+            job_type = 'Internship' if 'summer' in title.lower() else 'Graduate'
             insert_new_positions(name=title,
                                  description='NA',
                                  role='NA',
                                  location=location,
                                  job_type=job_type,
-                                 date_posted=None,
+                                 date_posted=datetime.utcnow(),
                                  date_closing=None,
                                  company_id=comp.id,
                                  url='https://jobs.citi.com' + i['href'])
 
     def GoldmanSachs(self):
         print('Getting new listings from Goldman Sachs...')
-        #comp = company_checker(name='Goldman Sachs', description='Description to be filled', industry='', url='goldman-sachs')
+        comp = company_checker(name='Goldman Sachs', description='Description to be filled', industry='', url='goldman-sachs')
 
         url = 'https://www.goldmansachs.com/careers/students/programs/programs-list.json'
 
@@ -142,12 +141,13 @@ class Scraper:
         output = json.loads(html.text)
 
         for i in output['programs']:
+
             insert_new_positions(name=i['title'],
                                  description=i['programTypeDescription'],
                                  role='NA',
                                  location=i['region']['name'],
-                                 job_type='NA',
-                                 date_posted=None,
+                                 job_type=check_job(i['title']),
+                                 date_posted=datetime.utcnow(),
                                  date_closing=None,
                                  company_id=comp.id,
                                  url=f'https://www.goldmansachs.com{i["url"]}')
@@ -164,16 +164,18 @@ class Scraper:
 
         for i in output:
             for j in output[i]:
-                insert_new_positions(name=j['title'],
-                                     description='NA',
-                                     role=j['level'],
-                                     location=j['region'],
-                                     job_type='NA',
-                                     date_posted=None,
-                                     date_closing=None,
-                                     company_id=comp.id,
-                                     url=j['application_url'])
-            print('JP Morgan Complete')
+                days = datetime.fromisoformat(j['end_date']).date() - datetime.now().date()
+                if days.days > 0:
+                    insert_new_positions(name=j['name'],
+                                        description='NA',
+                                        role='NA',
+                                        location=j['region'],
+                                        job_type=j['level'],
+                                        date_posted=datetime.utcnow(),
+                                        date_closing=datetime.fromisoformat(j['end_date']).date(),
+                                        company_id=comp.id,
+                                        url=j['application_url'])
+        print('JP Morgan Complete')
 
     def MorganStanley(self):
         print('Getting new listings from Morgan Stanley...')
@@ -190,13 +192,14 @@ class Scraper:
             insert_new_positions(name=i['data-title'],
                                  description='NA',
                                  role='NA',
-                                 location='NA',
+                                 location=i.find_all('td', {'class': 'comm_list_tbody'})[1].text.replace(' ', '').replace('\n', ''),
                                  job_type='NA',
-                                 date_posted=None,
+                                 date_posted=datetime.utcnow(),
                                  date_closing=None,
                                  company_id=comp.id,
                                  url=i.find('a', {'class': 'subject'})['href'])
         print('Morgan Stanley Complete')
+
 
     def Nomura(self):
         print('Getting new listings from Nomura...')
@@ -303,6 +306,3 @@ class Scraper:
                                  url=i.find('a', {'class': 'subject'})['href'])
         print('Nomura Complete')
     
-
-
-Scraper().Citi()
