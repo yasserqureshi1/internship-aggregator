@@ -21,4 +21,4 @@ def error_500(error):
 
 
 if __name__ == '__main__':
-    app.run(use_reloader=False, debug=True)     # Change this
+    app.run(debug=False, port=int(os.environ.get("PORT", 5000)), host='0.0.0.0')
