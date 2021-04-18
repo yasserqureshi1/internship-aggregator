@@ -20,5 +20,12 @@ def error_500(error):
     return render_template('errors/500.html'), 500
 
 
+@app.before_first_request
+def scrape_company_sites():
+    print('Starting scrape')
+    from app.webscraper import Scraper
+    Scraper()
+    print("Scrape done")
+
 if __name__ == '__main__':
     app.run(debug=False)

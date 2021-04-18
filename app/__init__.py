@@ -6,11 +6,6 @@ from config import Config
 db = SQLAlchemy()
 
 
-def scrape_company_sites():
-    print('Starting scrape')
-    from app.webscraper import Scraper
-    Scraper()
-    print("Scrape done")
 
 
 def create_app():
@@ -25,11 +20,6 @@ def create_app():
         db.create_all()
         db.session.commit()
     app.app_context().push()
-
-    scrape_company_sites()
-    sched = BackgroundScheduler(daemon=True)
-    sched.add_job(scrape_company_sites, 'interval', hours=6)
-    sched.start()
 
     db.session.commit()
     
