@@ -7,9 +7,9 @@
         <h1 class='fs-1' style='padding-bottom: 10px;'>Search Results</h1>
     </div>
     <div class="row">
-        <form>
+        <form method="POST">
             <input type="text" name="search" placeholder="Search">
-            <button type="submit">Search</button>
+            <button type="submit" class="btn-primary">Search</button>
         </form>
     </div>
 </div>
@@ -17,7 +17,7 @@
 <!-- Search Results -->
 <div>
     <div>
-        {% for pos in browse %}
+        {% for pos in results %}
         <div style="padding-top:10px; padding-bottom:10px;">
             <div class="card card-block">
                 <div class="card-body">

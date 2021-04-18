@@ -23,15 +23,11 @@
         </div>
 
         <!-- Search -->
-        <div class="row">
-            <div class="col-3"></div>
-            <div class="col-6 text-center">
-                <form class="d-flex">
-                    <input type="text" class="form-control">
-                    <button type="submit" class="btn-primary ">Search</button>
-                </form>
-            </div>
-            <div class="col-3"></div>
+        <div class="row text-center">
+            <form method="POST" action="{{ url_for('views.search') }}">
+                <input type="text" name='search'>
+                <button type="submit" class="btn-primary ">Search</button>
+            </form>
         </div>
         
         <!-- Main body -->

@@ -35,13 +35,32 @@ def base_page():
 
     return render_template('index.html', new_pos=new_pos, close_pos=close_pos, browse=browse)
 
-'''
-@views.route('/search', methods['GET', 'POST'])
+
+@views.route('/search', methods=['GET', 'POST'])
 def search():
-    s = request.method['search']
-    query = Positions.query.filter(Positions.name.like('%' + s + '%'))
-    return render_template('search.html', )
-'''
+    if request.method == 'POST':
+        s = request.form['search']
+        if s != '':
+            query = Positions.query.filter(Positions.name.like('%' + s + '%')).all()
+        else:
+            query = Positions.query.order_by(Positions.name).limit(10).all()
+    else:
+        query = Positions.query.order_by(Positions.name).limit(10).all()
+    
+    results = []
+    for item in query:
+        company = Companies.query.filter_by(id=item.company_id).first()
+        results.append({
+            'company': company.name,
+            'name': item.name,
+            'url': item.url,
+            'location': item.location,
+            'description': item.description,
+            'lastupdated': item.date_posted,
+            'job_type': item.job_type
+        })
+    return render_template('search.html', results=results)
+
 
 @views.route('/about', methods=['GET'])
 def about():
@@ -60,12 +79,21 @@ def list_of_companies():
                 for q in query:
                     no_open = Positions.query.filter_by(company_id=q.id).all()
                     search.append({'name': q.name, 'industry': q.industry, 'no-open': len(no_open), 'description':q.description, 'link': f'companies/{q.url}'})
+    
+        if 'search' in request.form:
+            s = request.form['search']
+            query = Companies.query.filter(Companies.name.like('%' + s + '%')).order_by(Companies.name).all()
+            search = []
+            for q in query:
+                no_open = Positions.query.filter_by(company_id=q.id).all()
+                search.append({'name': q.name, 'industry': q.industry, 'no-open': len(no_open), 'description':q.description, 'link': f'companies/{q.url}'})
+    
     else:
         query = Companies.query.filter(Companies.name.startswith('A')).order_by(Companies.name).all()
         search = []
         for q in query:
-            open = Positions.query.filter_by(company_id=q.id).all().count()
-            search.append({'name': q.name, 'industry': q.industry, 'no-open': open, 'description':q.description})
+            open_pos = Positions.query.filter_by(company_id=q.id).all().count()
+            search.append({'name': q.name, 'industry': q.industry, 'no-open': open_pos, 'description':q.description})
     return render_template('companies.html', search=search)
 
 
