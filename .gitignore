@@ -1,7 +1,6 @@
 # Project exclude paths
 /venv/
-NOTES.txt
-app/database/app.db
+/app/app.db
 .idea
 __pycache__
 app/__pycache__
