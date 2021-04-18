@@ -132,7 +132,7 @@ class Scraper:
 
         url = 'https://jobs.citi.com/search-jobs/results?ActiveFacetID=Recent+Graduates&CurrentPage=1&RecordsPerPage=500&Distance=50&RadiusUnitType=0&Keywords=&Location=&ShowRadius=False&IsPagination=False&CustomFacetName=&FacetTerm=&FacetType=0&FacetFilters%5B0%5D.ID=Recent+Graduates&FacetFilters%5B0%5D.FacetType=5&FacetFilters%5B0%5D.Count=205&FacetFilters%5B0%5D.Display=Recent+Graduates&FacetFilters%5B0%5D.IsApplied=true&FacetFilters%5B0%5D.FieldName=custom_fields.ECAMPUS&SearchResultsModuleName=Search+Results&SearchFiltersModuleName=Search+Filters&SortCriteria=0&SortDirection=0&SearchType=5&PostalCode=&fc=&fl=&fcf=&afc=&afl=&afcf='
 
-        html = requests.get(url=url, headers=headers, proxies={"http": f"http://{proxyObject.get()}"})
+        html = requests.get(url=url, headers=headers, proxies={"http": f"http://{proxyObject.get()}"}, timeout=10)
         output = json.loads(html.text)
         soup = BeautifulSoup(output['results'], 'html.parser')
 
@@ -158,7 +158,7 @@ class Scraper:
 
         url = 'https://www.goldmansachs.com/careers/students/programs/programs-list.json'
 
-        html = requests.get(url=url, headers={'User-Agent': user_agent_rotator.get_random_user_agent()}, proxies={"http": f"http://{proxyObject.get()}"})
+        html = requests.get(url=url, headers={'User-Agent': user_agent_rotator.get_random_user_agent()}, proxies={"http": f"http://{proxyObject.get()}"}, timeout=10)
         output = json.loads(html.text)
 
         for i in output['programs']:
@@ -180,7 +180,7 @@ class Scraper:
 
         url = 'https://careers.jpmorgan.com/services/json/careers/gate/programs.json'
 
-        html = requests.get(url=url, headers={'User-Agent': user_agent_rotator.get_random_user_agent()}, proxies={"http": f"http://{proxyObject.get()}"})
+        html = requests.get(url=url, headers={'User-Agent': user_agent_rotator.get_random_user_agent()}, proxies={"http": f"http://{proxyObject.get()}"}, timeout=10)
         output = json.loads(html.text)
 
         for i in output:
@@ -205,7 +205,7 @@ class Scraper:
         url = 'https://morganstanley.tal.net/vx/lang-en-GB/mobile-0/brand-2/xf-3786f0ce9359/candidate/jobboard/vacancy/1' \
               '/adv/?f_Item_Opportunity_13857_lk=765&f_Item_Opportunity_17058_lk=133794&ftq= '
 
-        html = requests.get(url=url, headers={'User-Agent': user_agent_rotator.get_random_user_agent()}, proxies={"http": f"http://{proxyObject.get()}"})
+        html = requests.get(url=url, headers={'User-Agent': user_agent_rotator.get_random_user_agent()}, proxies={"http": f"http://{proxyObject.get()}"}, timeout=10)
         output = BeautifulSoup(html.text, 'html.parser')
 
         job_list = output.select('tr[class*="search_res details_row"]')
