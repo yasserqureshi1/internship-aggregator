@@ -66,10 +66,22 @@ def check_job(text):
 class Scraper:
     def __init__(self):
         #self.BailleGifford() Currently none open
-        self.Citi()
-        self.MorganStanley()
-        self.JPMorgan()
-        self.GoldmanSachs()
+        try:
+            self.Citi()
+        except Exception as e:
+            print(e)
+        try:
+            self.MorganStanley()
+        except Exception as e:
+            print(e)
+        try:
+            self.JPMorgan()
+        except Exception as e:
+            print(e)
+        try:
+            self.GoldmanSachs()
+        except Exception as e:
+            print(e)
         #self.Nomura()
         #self.Royal_Bank_of_Canada()
         #self.UBS()
